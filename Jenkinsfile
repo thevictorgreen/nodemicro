@@ -13,21 +13,31 @@ node("cicd-build-slaves") {
 
   dir ("app") {
 
-    stage("TEST") {
-      //
-      def myTestContainer = docker.image('node:4.6')
-      myTestContainer.pull()
-      myTestContainer.inside {
-        sh "npm install --only=dev"
-        sh "npm test"
+    try {
+      stage("TEST") {
+        //
+        def myTestContainer = docker.image('node:4.6')
+        myTestContainer.pull()
+        myTestContainer.inside {
+          sh "npm install --only=dev"
+          sh "npm test"
+        }
       }
+    } catch(e) {
+      currentBuild.result = "FAILURE";
+      println("TEST FAILED")
     }
 
-    stage("DOCKER BUILD / PUSH") {
-      //
-      docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
-        def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+    try {
+      stage("DOCKER BUILD / PUSH") {
+        //
+        docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
+          def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+        }
       }
+    } catch(e) {
+      currentBuild.result = "FAILURE";
+      println("BUILD PUSH FAILED")
     }
 
   }
