@@ -10,23 +10,6 @@ node("cicd-build-slaves") {
     sh "git rev-parse --short HEAD > .git/commit-id"
     commit_id = readFile('.git/commit-id').trim()
   }
-  post {
-    always {
-      println("PREPARE STAGE ALWAYS")
-    }
-    success {
-      println("PREPARE STAGE SUCCESS")
-    }
-    unstable {
-      println("PREPARE STAGE UNSTABLE")
-    }
-    failure {
-      println("PREPARE STAGE FAILED")
-    }
-    changed {
-      println("PREPARE STAGE CHANGED")
-    }
-  }
 
   dir ("app") {
 
@@ -39,23 +22,6 @@ node("cicd-build-slaves") {
         sh "npm test"
       }
     }
-    post {
-      always {
-        println("TEST STAGE ALWAYS")
-      }
-      success {
-        println("TEST STAGE SUCCESS")
-      }
-      unstable {
-        println("TEST STAGE UNSTABLE")
-      }
-      failure {
-        println("TEST STAGE FAILED")
-      }
-      changed {
-        println("TEST STAGE CHANGED")
-      }
-    }
 
     stage("DOCKER BUILD / PUSH") {
       //
@@ -63,22 +29,6 @@ node("cicd-build-slaves") {
         def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
       }
     }
-    post {
-      always {
-        println("BUILD STAGE ALWAYS")
-      }
-      success {
-        println("BUILD STAGE SUCCESS")
-      }
-      unstable {
-        println("BUILD STAGE UNSTABLE")
-      }
-      failure {
-        println("BUILD STAGE FAILED")
-      }
-      changed {
-        println("BUILD STAGE CHANGED")
-      }
-    }
+
   }
 }
