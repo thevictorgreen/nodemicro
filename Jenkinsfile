@@ -1,5 +1,5 @@
 // Build Pipeline with docker
-node("cicdnode-0") {
+node("cicd-build-slaves") {
 
   // commit_id will be used to tag our docker builds
   def commit_id
