@@ -14,7 +14,7 @@ node("cicd-build-slaves") {
   stage("CODE QUALITY") {
     def sonarqubeScannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
-      sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=https//sonarqube.thevictorgreen.com -Dsonar.login=${sonarLogin} -Dsonar.projectName=vdigital-nodemicro -Dsonar.projectVersion=${commit_id} -Dsonar.projectKey=vdigital-nodemicro -Dsonar.sources=app/ -Dsonar.tests=app/test/ -Dsonar.language=javascript"
+      sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=https://sonarqube.thevictorgreen.com -Dsonar.login=${sonarLogin} -Dsonar.projectName=vdigital-nodemicro -Dsonar.projectVersion=${commit_id} -Dsonar.projectKey=vdigital-nodemicro -Dsonar.sources=app/ -Dsonar.tests=app/test/ -Dsonar.language=javascript"
     }
   }
 
