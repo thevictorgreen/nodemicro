@@ -21,10 +21,16 @@ node("cicd-build-slaves") {
         sh "npm install --only=dev"
         sh "npm test"
       }
+
+      stage("DOCKER BUILD / PUSH") {
+        docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
+          def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+        }
+      }
+
     }
-    
   }
 
-  
+
 
 }
