@@ -84,6 +84,7 @@ def notifyTeam(String buildStatus = 'STARTED') {
   }
 
   // SEND MESSAGE TO SLACK CHANNEL
+  slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
 
   // SEND MESSAGE TO OTHER
 
