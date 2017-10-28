@@ -85,6 +85,8 @@ def notifyTeam(String buildStatus = 'STARTED') {
 
   // SEND MESSAGE TO SLACK CHANNEL
 
+  // SEND MESSAGE TO OTHER
+
   // SEND EMAIL MESSAGE
   emailext (
       subject: subject,
