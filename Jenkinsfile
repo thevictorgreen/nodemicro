@@ -83,6 +83,8 @@ def notifyTeam(String buildStatus = 'STARTED') {
     colorCode = '#FF0000'
   }
 
+  // SEND MESSAGE TO SLACK CHANNEL
+
   // SEND EMAIL MESSAGE
   emailext (
       subject: subject,
