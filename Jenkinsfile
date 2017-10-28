@@ -46,7 +46,6 @@ node("cicd-build-slaves") {
       }
     }
 
-
   } catch(e) {
     currentBuild.result = "FAILED";
     throw e;
@@ -55,6 +54,12 @@ node("cicd-build-slaves") {
     // SUCCESS OR FAILURE
     // ALWAYS SEND NOTIFICATIONS
     // ALWAYS CLEAN UP
-    println("FINALLY REACHED")
+    cleanUp();
   }
+}
+
+
+def cleanUp() {
+  cleanWs();
+  println("WORKSPACE CLEANED UP");
 }
