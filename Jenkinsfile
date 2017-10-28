@@ -66,7 +66,12 @@ node("cicd-build-slaves") {
     try {
       stage("SUCCESS") {
         // NOTIFY PIPELINE COMPLETION SUCCESS
-        println("SUCCESS COMPLETION")
+        println("SUCCESS COMPLETION");
+        emailText(
+          subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+          body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p> <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",
+          recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+          )
       }
     } catch(e) {
       currentBuild.result = "FAILURE";
