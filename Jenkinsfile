@@ -5,38 +5,26 @@ node("cicd-build-slaves") {
   def commit_id
 
   try {
+
     stage('CHECKOUT') {
       // CLONE THE REPOSITORY INTO THE WORKSPACE
       git url: 'https://github.com/thevictorgreen/nodemicro.git'
       sh "git rev-parse --short HEAD > .git/commit-id"
       commit_id = readFile('.git/commit-id').trim()
     }
-  } catch(e) {
-    currentBuild.result = "FAILURE";
-    println("TEST FAILED")
-  }
 
-
-  try {
     stage("CODE-QUALITY") {
       // SCAN SOURCE CODE FOR CODE QUALITY
       def sonarqubeScannerHome = tool name: 'sonar', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
       println("SonarhomeInst:" + sonarqubeScannerHome)
       withCredentials([string(credentialsId: 'sonar', variable: 'sonarLogin')]) {
-        sh "${sonarqubeScannerHome}/bin/sonar-scanner -X -e -Dsonar.host.url=https://sonarqube.thevictorgreen.com -Dsonar.login=${sonarLogin} -Dsonar.projectName=vdigital-nodemicro -Dsonar.projectVersion=${commit_id} -Dsonar.projectKey=vdigital-nodemicro -Dsonar.sources=app/ -Dsonar.language=js"
+        sh "${sonarqubeScannerHome}/bin/sonar-scanner -e -Dsonar.host.url=https://sonarqube.thevictorgreen.com -Dsonar.login=${sonarLogin} -Dsonar.projectName=vdigital-nodemicro -Dsonar.projectVersion=${commit_id} -Dsonar.projectKey=vdigital-nodemicro -Dsonar.sources=app/ -Dsonar.language=js"
       }
     }
-  } catch(e) {
-    currentBuild.result = "FAILURE";
-    println("TEST FAILED")
-  }
 
-
-  dir ("app") {
-
-    try {
-      stage("TEST") {
-        // RUN TEST
+    stage("TEST") {
+      // RUN TEST
+      dir ("app") {
         def myTestContainer = docker.image('node:4.6')
         myTestContainer.pull()
         myTestContainer.inside {
@@ -44,39 +32,29 @@ node("cicd-build-slaves") {
           sh "npm test"
         }
       }
-    } catch(e) {
-      currentBuild.result = "FAILURE";
-      println("TEST FAILED")
     }
 
-
-    try {
-      stage("DOCKER BUILD") {
-        // BUILD AND PUSH IMAGE TO DOCKERHUB
-        docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
-          def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+    stage("BUILD") {
+      // BUILD AND PUSH IMAGE TO DOCKERHUB
+      dir ("app") {
+        stage("DOCKER BUILD") {
+          // BUILD AND PUSH IMAGE TO DOCKERHUB
+          docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
+            def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+          }
         }
       }
-    } catch(e) {
-      currentBuild.result = "FAILURE";
-      println("BUILD PUSH FAILED")
     }
 
 
-    try {
-      stage("SUCCESS") {
-        // NOTIFY PIPELINE COMPLETION SUCCESS
-        println("SUCCESS COMPLETION");
-        emailText(
-          subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-          body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p> <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>""",
-          recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-          )
-      }
-    } catch(e) {
-      currentBuild.result = "FAILURE";
-      println("BUILD PUSH FAILED")
-    }
-
+  } catch(e) {
+    currentBuild.result = "FAILED";
+    throw e;
+  }
+  finally {
+    // SUCCESS OR FAILURE
+    // ALWAYS SEND NOTIFICATIONS
+    // ALWAYS CLEAN UP
+    println("FINALLY REACHED")
   }
 }
