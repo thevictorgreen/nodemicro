@@ -60,6 +60,7 @@ node("cicd-build-slaves") {
   }
 }
 
+
 def notifyTeam(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
@@ -84,10 +85,8 @@ def notifyTeam(String buildStatus = 'STARTED') {
   }
 
   // SEND MESSAGE TO SLACK CHANNEL
-  // Send notifications
-  slackSend (color: colorCode, message: summary)
-  //curl -X POST --data-urlencode "payload={\"channel\": \"#alerts\", \"username\": \"webhookbot\", \"icon_emoji\": \":ghost:\", \"text\": \"<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>\"}" https://hooks.slack.com/services/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
-  //slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})");
+  sh "curl -X POST --data-urlencode 'payload={\"channel\": \"#alerts\", \"username\": \"webhookbot\", \"icon_emoji\": \":ghost:\", \"text\": \"This is posted to #alerts and comes from a bot named webhookbot.\"}' https://hooks.slack.com/services/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"
+  //slackSend (color: colorCode, message: summary);
 
 }
 
