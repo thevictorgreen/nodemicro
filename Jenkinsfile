@@ -84,16 +84,11 @@ def notifyTeam(String buildStatus = 'STARTED') {
   }
 
   // SEND MESSAGE TO SLACK CHANNEL
-  slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})");
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+  //curl -X POST --data-urlencode "payload={\"channel\": \"#alerts\", \"username\": \"webhookbot\", \"icon_emoji\": \":ghost:\", \"text\": \"<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>\"}" https://hooks.slack.com/services/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
+  //slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})");
 
-  // SEND MESSAGE TO OTHER
-
-  // SEND EMAIL MESSAGE
-  emailext (
-      subject: subject,
-      body: details,
-      recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-    )
 }
 
 
