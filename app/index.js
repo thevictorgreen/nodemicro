@@ -60,6 +60,6 @@ function wardFunction(req, res, next) {
 
 server.listen(3000, function() {
   console.log('%s listening at %s', server.name, server.url);
-  console.log('ENVIRONMENT %s', process.env);
+  console.log('ENVIRONMENT %s', process.env.MYDB_SERVICE_HOST);
 });
 
