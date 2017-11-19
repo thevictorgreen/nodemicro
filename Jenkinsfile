@@ -7,7 +7,7 @@ node("cicd-build-slaves") {
   try {
 
     stage('CHECKOUT') {
-      //NOTIFY
+      //NOTIFYd
       notifyTeam("STARTED");
       // CLONE THE REPOSITORY INTO THE WORKSPACE
       git url: 'https://github.com/thevictorgreen/nodemicro.git'
