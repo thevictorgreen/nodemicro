@@ -1,11 +1,11 @@
 var restify  = require('restify');
 var mysql    = require('mysql');
 
-var dbhost = process.env.MYDB_SERVICE_HOST;
+//var dbhost = process.env.MYDB_SERVICE_HOST;
 
 var pool     =    mysql.createPool({
     connectionLimit : 100, //important
-    host     : dbhost,
+    host     : 'mydb',
     user     : 'police',
     password : 'g0th@m',
     database : 'crimesdc',
